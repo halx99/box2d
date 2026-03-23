@@ -47,6 +47,7 @@ static inline void b2Pause( void )
 static inline void b2Pause( void )
 {
 	__yield();
+  __dmb(_ARM64_BARRIER_SY); 
 }
 #else
 static inline void b2Pause( void )
