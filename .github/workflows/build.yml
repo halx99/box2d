@@ -88,6 +88,24 @@ jobs:
     - name: Test
       working-directory: ${{github.workspace}}/build
       run: ./bin/${{env.BUILD_TYPE}}/test
+
+  build-windows-arm64:
+    name: windows-arm64
+    runs-on: windows-11-arm
+    steps:
+
+    - uses: actions/checkout@v4
+
+    - name: Configure CMake
+      run: cmake -A arm64 -B ${{github.workspace}}/build -DCMAKE_BUILD_TYPE=${{env.BUILD_TYPE}} -DBOX2D_SAMPLES=OFF -DBOX2D_SANITIZE=ON -DBUILD_SHARED_LIBS=OFF -DBOX2D_VALIDATE=ON -DCMAKE_COMPILE_WARNING_AS_ERROR=ON
+      # run: cmake -B ${{github.workspace}}/build -DCMAKE_BUILD_TYPE=${{env.BUILD_TYPE}} -DBOX2D_SAMPLES=OFF -DBUILD_SHARED_LIBS=OFF
+
+    - name: Build
+      run: cmake --build ${{github.workspace}}/build --config ${{env.BUILD_TYPE}}
+
+    - name: Test
+      working-directory: ${{github.workspace}}/build
+      run: ./bin/${{env.BUILD_TYPE}}/test
       
   samples-windows-static:
     name: samples-windows-static
@@ -105,6 +123,21 @@ jobs:
 
     - name: Configure CMake
       run: cmake -B ${{github.workspace}}/build -DCMAKE_BUILD_TYPE=Release -DBOX2D_SAMPLES=ON -DBUILD_SHARED_LIBS=OFF -DBOX2D_UNIT_TESTS=OFF
+      
+    - name: Build
+      run: cmake --build ${{github.workspace}}/build --config Release
+
+  samples-windows-arm64-static:
+    name: samples-windows-arm64-static
+    runs-on: windows-11-arm
+    timeout-minutes: 6
+    if: github.event_name == 'push' || github.event.pull_request.draft == false
+    steps:
+
+    - uses: actions/checkout@v4
+
+    - name: Configure CMake
+      run: cmake -A arm64 -B ${{github.workspace}}/build -DCMAKE_BUILD_TYPE=Release -DBOX2D_SAMPLES=ON -DBUILD_SHARED_LIBS=OFF -DBOX2D_UNIT_TESTS=OFF
       
     - name: Build
       run: cmake --build ${{github.workspace}}/build --config Release
