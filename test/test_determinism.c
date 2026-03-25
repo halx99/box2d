@@ -181,6 +181,8 @@ static int CrossPlatformTest( void )
 
 int DeterminismTest( void )
 {
+	_controlfp_s( NULL, _DN_SAVE, _MCW_DN ); 
+
 	RUN_SUBTEST( CrossPlatformTest );
 	RUN_SUBTEST( MultithreadingTest );
 
