@@ -154,6 +154,13 @@ static int MultithreadingTest( void )
 // Test cross-platform determinism.
 static int CrossPlatformTest( void )
 {
+	b2Rot r = b2MakeRot( 0.1f );
+	printf( "b2MakeRot(0.1f) HEX: cos=%a, sin=%a\n", r.c, r.s );
+
+	float test_val = 0.123456f;
+	float res = sqrtf( test_val );
+	printf( "SQRTF(0.123456) HEX: %a\n", res );
+
 	b2WorldDef worldDef = b2DefaultWorldDef();
 	b2WorldId worldId = b2CreateWorld( &worldDef );
 
