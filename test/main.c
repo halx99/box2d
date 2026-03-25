@@ -4,6 +4,7 @@
 #include "test_macros.h"
 
 #if defined( _MSC_VER )
+  #include <inttypes.h>
 	#include <crtdbg.h>
 
 // int MyAllocHook(int allocType, void* userData, size_t size, int blockType, long requestNumber, const unsigned char* filename,
@@ -16,6 +17,38 @@
 //
 //	return 1;
 // }
+#endif
+
+#if defined(_WIN32) && defined(_M_ARM64)
+#include <arm64intr.h>
+static void b2FixArm64NeonDeterminism()
+{
+    // Microsoft official standard method to access FPCR
+    uint64_t fpcr = _ReadStatusReg(ARM64_FPCR);
+
+    printf("default fpcr: %llu\n", fpcr);
+
+    // Disable FTZ (bit 19) and DAZ (bit 20) to preserve denormals
+    // Required for floating-point determinism on Windows ARM64
+    fpcr &= ~(1ULL << 19);
+    fpcr &= ~(1ULL << 20);
+
+    // Force IEEE 754 standard rounding mode: Round to Nearest, Ties to Even
+    fpcr &= ~(3ULL << 22);
+    fpcr |=  (0ULL << 22);
+
+    // UE5 recommended settings for full cross-platform NEON determinism
+    // AH (bit 24): Alternate Half
+    // NEP (bit 25): NEON Processing mode (unifies scalar/vector precision)
+    fpcr |= (1ULL << 24);
+    fpcr |= (1ULL << 25);
+
+    printf("new fpcr: %llu", fpcr);
+    // Write back the finalized FPCR state
+    _WriteStatusReg(ARM64_FPCR, fpcr);
+}
+#else
+static void b2FixArm64NeonDeterminism() {}
 #endif
 
 extern int BitSetTest( void );
@@ -47,6 +80,8 @@ int main( void )
 	//_CrtSetAllocHook(MyAllocHook);
 	//_CrtSetBreakAlloc(196);
 #endif
+
+  b2FixArm64NeonDeterminism();
 
 	printf( "Starting Box2D unit tests\n" );
 	printf( "======================================\n" );
