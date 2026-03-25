@@ -62,7 +62,7 @@ jobs:
 
     - uses: actions/upload-artifact@v6
       with:
-        name: libbox2d.a
+        name: libbox2d-linux-arm64.a
         path: |
           ${{github.workspace}}/build/src/libbox2d.a
       

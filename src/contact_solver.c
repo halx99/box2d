@@ -708,14 +708,14 @@ static inline b2FloatW b2MulW( b2FloatW a, b2FloatW b )
 	return vmulq_f32( a, b );
 }
 
-static inline b2FloatW b2MulAddW( b2FloatW a, b2FloatW b, b2FloatW c )
+b2FloatW b2MulAddW( b2FloatW a, b2FloatW b, b2FloatW c )
 {
-	return vaddq_f32( a, vmulq_f32( b, c ) ); // vmlaq_f32( a, b, c );
+	return vmlaq_f32( a, b, c );
 }
 
 static inline b2FloatW b2MulSubW( b2FloatW a, b2FloatW b, b2FloatW c )
 {
-	return vsubq_f32( a, vmulq_f32( b, c ) ); // vmlsq_f32( a, b, c );
+	return vmlsq_f32( a, b, c );
 }
 
 static inline b2FloatW b2MinW( b2FloatW a, b2FloatW b )
