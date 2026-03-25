@@ -46,9 +46,9 @@ endif()
 
 # Deterministic math
 # https://box2d.org/posts/2024/08/determinism/
-if (MINGW OR APPLE OR UNIX)
-	add_compile_options(-ffp-contract=off)
-endif()
+# if (MINGW OR APPLE OR UNIX)
+# 	add_compile_options(-ffp-contract=off)
+# endif()
 
 option(BOX2D_DISABLE_SIMD "Disable SIMD math (slower)" OFF)
 option(BOX2D_COMPILE_WARNING_AS_ERROR "Compile warnings as errors" OFF)
@@ -68,7 +68,7 @@ set(CMAKE_RUNTIME_OUTPUT_DIRECTORY "${CMAKE_CURRENT_BINARY_DIR}/bin")
 add_subdirectory(src)
 
 # This hides samples, test, and doxygen from apps that use box2d via FetchContent
-if(PROJECT_IS_TOP_LEVEL)
+if(PROJECT_IS_TOP_LEVEL AND NOT ANDROID AND NOT IOS)
 	option(BOX2D_SAMPLES "Build the Box2D samples" ON)
 	option(BOX2D_BENCHMARKS "Build the Box2D benchmarks" OFF)
 	option(BOX2D_DOCS "Build the Box2D documentation" OFF)
