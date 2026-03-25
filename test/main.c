@@ -26,8 +26,6 @@ static void b2FixArm64NeonDeterminism()
     // Microsoft official standard method to access FPCR
     uint64_t fpcrOld  = _ReadStatusReg(ARM64_FPCR);
 
-    printf("default fpcr: %llx\n", fpcrOld);
-
     // FORCE WINDOWS ARM64 TO FULLY DETERMINISTIC FLOAT MODE
     // Fixes NEON determinism by disabling FTZ/DAZ and setting IEEE rounding
     uint64_t fpcr = 0;
@@ -47,7 +45,7 @@ static void b2FixArm64NeonDeterminism()
     _WriteStatusReg(ARM64_FPCR, fpcr);
     fpcr  = _ReadStatusReg(ARM64_FPCR);
 
-    printf("fpcr was modified: %llx ==> %llx\n", fpcr);
+    printf("fpcr was modified: %llx ==> %llx\n", fpcrOld, fpcr);
 }
 #else
 static void b2FixArm64NeonDeterminism() {}
