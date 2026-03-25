@@ -58,9 +58,13 @@ jobs:
       run: cmake -B ${{github.workspace}}/build -DCMAKE_BUILD_TYPE=${{env.BUILD_TYPE}} -DBOX2D_SAMPLES=OFF -DBUILD_SHARED_LIBS=OFF -DBOX2D_VALIDATE=ON -DCMAKE_COMPILE_WARNING_AS_ERROR=ON
 
     - name: Build
-      run: |
-        cmake --build ${{github.workspace}}/build --config ${{env.BUILD_TYPE}}
-        ls -r ${{github.workspace}}/build | grep box2d
+      run: cmake --build ${{github.workspace}}/build --config ${{env.BUILD_TYPE}} --target box2d
+
+    - uses: actions/upload-artifact@v6
+      with:
+        name: libbox2d.a
+        path: |
+          ${{github.workspace}}/build/src/libbox2d.a
       
   build-macos:
     name: macos
