@@ -45,7 +45,7 @@ static void b2FixArm64NeonDeterminism()
     _WriteStatusReg(ARM64_FPCR, fpcr);
     fpcr  = _ReadStatusReg(ARM64_FPCR);
 
-    printf("fpcr was modified: %llx ==> %llx\n", fpcrOld, fpcr);
+    printf("fpcr was modified: 0x%llx ==> 0x%llx\n", fpcrOld, fpcr);
 }
 #else
 static void b2FixArm64NeonDeterminism() {}
