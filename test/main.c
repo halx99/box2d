@@ -24,28 +24,30 @@
 static void b2FixArm64NeonDeterminism()
 {
     // Microsoft official standard method to access FPCR
-    uint64_t fpcr = _ReadStatusReg(ARM64_FPCR);
+    uint64_t fpcrOld  = _ReadStatusReg(ARM64_FPCR);
 
-    printf("default fpcr: %llu\n", fpcr);
+    printf("default fpcr: %llx\n", fpcrOld);
 
-    // Disable FTZ (bit 19) and DAZ (bit 20) to preserve denormals
-    // Required for floating-point determinism on Windows ARM64
+    // FORCE WINDOWS ARM64 TO FULLY DETERMINISTIC FLOAT MODE
+    // Fixes NEON determinism by disabling FTZ/DAZ and setting IEEE rounding
+    uint64_t fpcr = 0;
+
+    // Disable FTZ (bit19) and DAZ (bit20) - critical for physics determinism
     fpcr &= ~(1ULL << 19);
     fpcr &= ~(1ULL << 20);
 
-    // Force IEEE 754 standard rounding mode: Round to Nearest, Ties to Even
+    // Set IEEE 754 standard rounding mode (bits 22-23 = 00)
     fpcr &= ~(3ULL << 22);
-    fpcr |=  (0ULL << 22);
 
-    // UE5 recommended settings for full cross-platform NEON determinism
-    // AH (bit 24): Alternate Half
-    // NEP (bit 25): NEON Processing mode (unifies scalar/vector precision)
+    // Enable AH (bit24) + NEP (bit25) for cross-platform NEON consistency (UE5 style)
     fpcr |= (1ULL << 24);
     fpcr |= (1ULL << 25);
 
-    printf("new fpcr: %llu", fpcr);
-    // Write back the finalized FPCR state
+    // Write full deterministic FPCR state (bypasses MSVC register read bug)
     _WriteStatusReg(ARM64_FPCR, fpcr);
+    fpcr  = _ReadStatusReg(ARM64_FPCR);
+
+    printf("fpcr was modified: %llx ==> %llx\n", fpcr);
 }
 #else
 static void b2FixArm64NeonDeterminism() {}
