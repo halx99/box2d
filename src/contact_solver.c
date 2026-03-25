@@ -708,6 +708,8 @@ static inline b2FloatW b2MulW( b2FloatW a, b2FloatW b )
 	return vmulq_f32( a, b );
 }
 
+b2FloatW b2MulAddW( b2FloatW a, b2FloatW b, b2FloatW c );
+
 b2FloatW b2MulAddW( b2FloatW a, b2FloatW b, b2FloatW c )
 {
 	return vmlaq_f32( a, b, c );
