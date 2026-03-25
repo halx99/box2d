@@ -204,7 +204,13 @@ int DeterminismTest( void )
 {
 #if defined( _M_ARM64 ) || defined( __aarch64__ ) && defined( _WIN32 )
 	unsigned long long fpcr = _ReadStatusReg( ARM64_FPCR );
-	fpcr &= ~( 1ULL << 24 );
+
+	fpcr |= ( 1ULL << 24 );
+
+	fpcr |= ( 1ULL << 25 );
+
+	fpcr &= ~( 3ULL << 22 );
+
 	_WriteStatusReg( ARM64_FPCR, fpcr );
 #endif
 
