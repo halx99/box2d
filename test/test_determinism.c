@@ -17,6 +17,10 @@
 #define TracyCFrameMark
 #endif
 
+#if defined( _M_ARM64 ) || defined( __aarch64__ ) && defined(_WIN32)
+#include <arm64intr.h>
+#endif
+
 #define EXPECTED_SLEEP_STEP 293
 #define EXPECTED_HASH 0x2FF98AC6
 
@@ -154,6 +158,8 @@ static int CrossPlatformTest( void )
 	b2WorldId worldId = b2CreateWorld( &worldDef );
 
 	FallingHingeData data = CreateFallingHinges( worldId );
+	printf( "Frame | Body0.x (Hex) | Body0.y (Hex) | Body79.x (Hex) | AwakeCount\n" );
+	printf( "--------------------------------------------------------------------\n" );
 
 	float timeStep = 1.0f / 60.0f;
 
@@ -163,6 +169,14 @@ static int CrossPlatformTest( void )
 		int subStepCount = 4;
 		b2World_Step( worldId, timeStep, subStepCount );
 		TracyCFrameMark;
+
+		if (data.stepCount < 400)
+		{
+			b2Transform xf0 = b2Body_GetTransform( data.bodyIds[0] );
+			b2Transform xf79 = b2Body_GetTransform( data.bodyIds[data.bodyCount - 1] );
+			int awakeCount = b2World_GetAwakeBodyCount( worldId );
+			printf( "%5d | %a | %a | %a | %d\n", data.stepCount, xf0.p.x, xf0.p.y, xf79.p.x, awakeCount );
+		}
 
 		done = UpdateFallingHinges( worldId, &data );
 	}
@@ -181,7 +195,11 @@ static int CrossPlatformTest( void )
 
 int DeterminismTest( void )
 {
-	_controlfp_s( NULL, _DN_SAVE, _MCW_DN ); 
+#if defined( _M_ARM64 ) || defined( __aarch64__ ) && defined( _WIN32 )
+	unsigned long long fpcr = _ReadStatusReg( ARM64_FPCR );
+	fpcr &= ~( 1ULL << 24 );
+	_WriteStatusReg( ARM64_FPCR, fpcr );
+#endif
 
 	RUN_SUBTEST( CrossPlatformTest );
 	RUN_SUBTEST( MultithreadingTest );

@@ -37,7 +37,7 @@ if (MSVC OR APPLE)
 	else()
 		if(MSVC AND CMAKE_CXX_COMPILER_ID STREQUAL "MSVC" AND PROJECT_IS_TOP_LEVEL)
 			# enable hot reloading
-      add_compile_options("/fp:strict")
+      add_compile_options("/fp:strict" "/fp:contract-")
 			add_compile_options("$<$<CONFIG:Debug>:/ZI>")
 			add_link_options("$<$<CONFIG:Debug>:/INCREMENTAL>")
 		endif()
