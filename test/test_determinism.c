@@ -125,7 +125,7 @@ static int SingleMultithreadingTest( int workerCount )
 
 	enkiDeleteTaskScheduler( scheduler );
 
-	printf( "SingleMultithreadingTest: slepStep=%d, hash=%u\n", data.sleepStep, data.hash );
+	printf( "SingleMultithreadingTest: sleepStep=%d, hash=0x%x\n", data.sleepStep, data.hash );
 	ENSURE( data.sleepStep == EXPECTED_SLEEP_STEP );
 	ENSURE( data.hash == EXPECTED_HASH );
 
@@ -141,7 +141,6 @@ static int MultithreadingTest( void )
 	{
 		int result = SingleMultithreadingTest( workerCount );
 
-		printf( "MultithreadingTest: #%d result=%d\n", workerCount, result );
 		ENSURE( result == 0 );
 	}
 
@@ -168,7 +167,7 @@ static int CrossPlatformTest( void )
 		done = UpdateFallingHinges( worldId, &data );
 	}
 
-	printf( "CrossPlatformTest: slepStep=%d, hash=%u\n", data.sleepStep, data.hash );
+	printf( "CrossPlatformTest: sleepStep=%d, hash=0x%x\n", data.sleepStep, data.hash );
 
 	ENSURE( data.sleepStep == EXPECTED_SLEEP_STEP );
 	ENSURE( data.hash == EXPECTED_HASH );
@@ -182,8 +181,8 @@ static int CrossPlatformTest( void )
 
 int DeterminismTest( void )
 {
-	RUN_SUBTEST( MultithreadingTest );
 	RUN_SUBTEST( CrossPlatformTest );
+	RUN_SUBTEST( MultithreadingTest );
 
 	return 0;
 }
